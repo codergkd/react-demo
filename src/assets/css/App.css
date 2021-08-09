@@ -1,0 +1,259 @@
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css");
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.photo-grid {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  height: 100vh;
+  max-width: 800px;
+  margin: 0 auto;
+  align-items: normal;
+  align-content: start;
+  min-height: 110vh;
+}
+.photo-grid li {
+  background: #ddd;
+  width: calc(25% - 40px);
+  padding: 10px;
+  margin: 10px;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  align-content: center;
+  display: flex;
+}
+.photo-grid li img {
+  width: 100%;
+}
+
+.box {
+  display: inline-block;
+  width: 50px;
+  height: 30px;
+
+  border-radius: 3px;
+  font-size: 30px;
+
+  position: relative;
+  margin-bottom: 0.25em;
+  vertical-align: top;
+  transition: 0.3s color, 0.3s border, 0.3s transform, 0.3s opacity;
+}
+.loader-15 {
+  background: #000;
+  position: relative;
+  -webkit-animation: loader-15 1s ease-in-out infinite;
+  animation: loader-15 1s ease-in-out infinite;
+  -webkit-animation-delay: 0.4s;
+  animation-delay: 0.4s;
+  width: 0.25em;
+  height: 0.5em;
+  margin: 0 0.5em;
+}
+.loader-15:after,
+.loader-15:before {
+  content: "";
+  position: absolute;
+  width: inherit;
+  height: inherit;
+  background: inherit;
+  -webkit-animation: inherit;
+  animation: inherit;
+}
+.loader-15:before {
+  right: 0.5em;
+  -webkit-animation-delay: 0.2s;
+  animation-delay: 0.2s;
+}
+.loader-15:after {
+  left: 0.5em;
+  -webkit-animation-delay: 0.6s;
+  animation-delay: 0.6s;
+}
+
+@-webkit-keyframes loader-15 {
+  0%,
+  100% {
+    box-shadow: 0 0 0 #000, 0 0 0 #000;
+  }
+  50% {
+    box-shadow: 0 -0.25em 0 #000, 0 0.25em 0 #000;
+  }
+}
+
+@keyframes loader-15 {
+  0%,
+  100% {
+    box-shadow: 0 0 0 #000, 0 0 0 #000;
+  }
+  50% {
+    box-shadow: 0 -0.25em 0 #000, 0 0.25em 0 #000;
+  }
+}
+.DisplayModal {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  text-align: center;
+}
+.DisplayModal .main-modal .closeModal {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.8);
+  color: #000;
+  font-family: monospace;
+
+  font-size: 16px;
+}
+.DisplayModal .main-modal .closeModal:hover {
+  cursor: pointer;
+}
+.DisplayModal .main-modal {
+  width: 90%;
+  height: 90vh;
+  margin-top: 5vh;
+  background: rgba(0, 0, 0, 0.7);
+  margin: 5vh auto;
+  border-radius: 5px;
+  display: flex;
+  position: relative;
+}
+.DisplayModal .main-modal .imageArea {
+  width: 50%;
+  display: flex;
+  justify-items: center;
+  justify-items: center;
+  align-items: center;
+  justify-content: center;
+}
+.DisplayModal .main-modal .imageArea img {
+  display: inline-block;
+  max-width: 90%;
+  height: auto;
+  width: auto;
+  max-height: 90%;
+}
+.DisplayModal .main-modal .contentArea {
+  width: 50%;
+  color: #fff;
+  text-align: left;
+  display: flex;
+  justify-items: center;
+  justify-items: center;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+.DisplayModal .main-modal .contentArea h2 {
+  font-size: 16px;
+}
+.DisplayModal .main-modal .contentArea p {
+  font-size: 13px;
+  text-align: left;
+}
+.next {
+  position: absolute;
+  top: 50%;
+  width: 50px;
+  right: 0;
+  color: #fff;
+  font-size: 30px;
+}
+.prev {
+  position: absolute;
+  top: 50%;
+  width: 50px;
+  left: 0;
+  font-size: 30px;
+  color: #fff;
+}
+.next:hover,
+.prev:hover {
+  cursor: pointer;
+}
+@media only screen and (max-width: 768px) {
+  .DisplayModal .main-modal {
+    flex-direction: column;
+  }
+  .DisplayModal .main-modal .imageArea {
+    width: 100%;
+    height: 50%;
+  }
+  .DisplayModal .main-modal .contentArea {
+    width: calc(100% - 100px);
+    height: 50%;
+    justify-items: center;
+    padding: 0 50px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+  }
+  .DisplayModal .main-modal .contentArea h2 {
+    text-align: center;
+    font-size: 20px;
+    line-height: 30px;
+    word-break: break-all;
+  }
+  .photo-grid li {
+    width: calc(33.33% - 40px);
+  }
+  .DisplayModal .main-modal .contentArea p {
+    font-size: 16px;
+    word-break: break-all;
+  }
+  .DisplayModal .main-modal .closeModal {
+    line-height: 35px;
+    width: 35px;
+    height: 35px;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .photo-grid li {
+    width: calc(50% - 40px);
+  }
+}
