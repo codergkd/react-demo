@@ -1,7 +1,7 @@
-import React, {Fragment} from 'react';
+import React, {useState, useEffect, Fragment,Suspense} from 'react';
 import { BottomScrollListener } from 'react-bottom-scroll-listener';
-import ImageModal from './ImageModal';
-import superagent from 'superagent';
+
+
 // Unsplashed API Client ID
 const clientID =
     "8e31e45f4a0e8959d456ba2914723451b8262337f75bcea2e04ae535491df16d";
@@ -18,141 +18,121 @@ let url =
     "&page=" + pageNumber;
 
 
-class ImagesData extends React.Component {
-    state = {
-        isLazyLoading: false,
-        imageData: [],
-        flag: false,
-        imageClickedData:null
-    };
-    // API call function
-    simpleGet = options => {
-        superagent.get(options.url).then(function (res) {
-            if (options.onSuccess) options.onSuccess(res);
-        });
-    };
-    // Lazy load function
-    lazyLoad = () => {
-        
-        this.setState({ isLazyLoading: true });
+export default function ImagesData() {
+    const [isLazyLoading, setIsLazyLoading] = useState(false);
+    const [imageData, setImageData] = useState([]);
+    const [flag, setFlag] = useState(false);
+    const [imageClickedData, setImageClickedData] = useState(null);
+    const [imageClicked, setImageClicked] = useState(null);
+    const ImageModal = React.lazy(() => import('./ImageModal'));
+    const fetchData = async (options) => {
+        try {
+          const response = await fetch(options.url);
+          const json = await response.json();
+          console.log(json)
+          options.onSuccess(json)
+        } catch (error) {
+          console.log("error", error);
+        }
+      };
+    const lazyLoad = () => {
+            
+        // this.setState({ isLazyLoading: true });
+        setIsLazyLoading(true);
         setTimeout(() => {
-            this.setState({
-                isLazyLoading: false,
-                flag: true,
-               
-            }, () => {
-                
+            setIsLazyLoading(false);
+            setFlag(true);
+            
                 pageNumber = pageNumber + 1;
-
+    
                 url =
                     "https://api.unsplash.com/photos/?count=" +
                     numberOfPhotos +
                     "&client_id=" +
                     clientID +
                     "&page=" + pageNumber;
-                !this.state.isLazyLoading && this.state.flag && this.simpleGet({
-                    url: url,
-                    onSuccess: res => {
-                        this.setState({
-                            imageData: [...this.state.imageData, ...res.body],
-                            flag: false
-                        })
-                    }
-                });
-            });
+                    !isLazyLoading && flag && fetchData({
+                        url: url,
+                        onSuccess: res => {
+                            setImageData([...imageData, ...res]);
+                            setFlag(false);
+                            
+                        }})
+            
         }, 2000);
     };
-    componentDidMount = () => {
-        // Call the function very initially when component mount
-        this.simpleGet({
+
+    useEffect(() => {
+        fetchData({
             url: url,
             onSuccess: res => {
-                this.setState({
-                    imageData: res.body
-                })
-            }
-        });
-    }
-    render() {
-        const { isLazyLoading,  } = this.state;
-        const { lazyLoad } = this;
+                setImageData([...imageData, ...res]);
+            }})
+        
+   }, [url])
+    return (
+        <Fragment>
+        <div className="App">
 
-        return (
-            <Fragment>
-            <div className="App">
+            <BottomScrollListener onBottom={lazyLoad}>
+            {/* Photos Grid Layout */}
+               <ul className="photo-grid">
+                    {imageData.length > 0 && imageData.map((photo, index) => {
+                        return (
+                            <li onClick={()=>{
+                                setImageClicked(index);
+                               
+                                imageClicked  && setImageClickedData(imageData.filter((getItem,getIndex)=>{
+                      return getIndex == imageClicked
+               }))                                                
+                                
+                            }} key={photo.id}>
+                                <img
+                                    src={photo.urls.thumb}
+                                   
+                                />
+                            </li>
+                        );
+                    })}
+                    {isLazyLoading && <li style={{width:'100%',height:'10px', backgroundColor:'transparent'}}>
+                    <div className="box">
+                        <div className="loader-15"></div>
+                    </div>
+                    </li>}
+                </ul>
+               
+            </BottomScrollListener>
 
-                <BottomScrollListener onBottom={lazyLoad}>
-                {/* Photos Grid Layout */}
-                   <ul className="photo-grid">
-                        {this.state.imageData.length > 0 ? this.state.imageData.map((photo, index) => {
-                            return (
-                                <li onClick={()=>{
-                                    this.setState({
-                                        imageClicked:index,
-                                        
-                                    },()=>{
-                                        this.setState({
-                                            imageClickedData:this.state.imageData.filter((item,index)=>{
-                                                        return index == this.state.imageClicked
-                                                    })
-                                        })
-                                    })
-                                }} key={photo.id}>
-                                    <img
-                                        src={photo.urls.thumb}
-                                       
-                                    />
-                                </li>
-                            );
-                        }) : <div style={{ textAlign: 'center', width: '100%', height: '200px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Please wait</div>}
-                        {isLazyLoading && <li style={{width:'100%',height:'10px', backgroundColor:'transparent'}}>
-                        <div className="box">
-                            <div className="loader-15"></div>
-                        </div>
-                        </li>}
-                    </ul>
-                   
-                </BottomScrollListener>
+            
+        </div>
+         {/* Image modal after clicking the Image */}
+       {imageClicked >= 0 && imageClicked !== null && <Suspense fallback={<div>Loading...</div>}>
+                <ImageModal
+                    imageClickedData={imageClickedData}
+                    imageClicked={imageClicked}
+                    imageData={imageData}
+                    next={()=>{
+                        setImageClicked(imageClicked < imageData.length - 1 ? imageClicked + 1:imageClicked);
+                        imageClicked && setImageClickedData(imageData.filter((getItem,getIndex)=>{
+                                return getIndex == imageClicked
+                        }))
 
-                
-            </div>
-             {/* Image modal after clicking the Image */}
-           {this.state.imageClicked >= 0 && this.state.imageClicked !== null && <ImageModal
-               imageClickedData={this.state.imageClickedData}
-               imageClicked={this.state.imageClicked}
-               imageData={this.state.imageData}
-               next={()=>{
-                     this.setState({
-                         imageClicked:this.state.imageClicked < this.state.imageData.length - 1 ? this.state.imageClicked + 1:this.state.imageClicked
-                     },()=>{
-                         this.setState({
-                          imageClickedData:this.state.imageData.filter((getItem,getIndex)=>{
-                          return getIndex == this.state.imageClicked
-                         })
-                         })
-                     })
-                 }}
-                 prev={()=>{
-                     this.setState({
-                         imageClicked:this.state.imageClicked !== 0 ? this.state.imageClicked - 1:this.state.imageClicked
-                     },()=>{
-                         this.setState({
-                          imageClickedData:this.state.imageData.filter((getItem,getIndex)=>{
-                          return getIndex == this.state.imageClicked
-                         })
-                         })
-                     })
-                 }}
-               closeModal={()=>{
-                 this.setState({
-                  imageClickedData:null,
-                  imageClicked:null
-                 })
-             }}
-           />}
-            </Fragment>
-        );
-    }
-}
+                        }}
+                        prev={()=>{
+                            setImageClicked(imageClicked !== 0 ? imageClicked - 1:imageClicked);
+                        imageClicked && setImageClickedData(imageData.filter((getItem,getIndex)=>{
+                                return getIndex == imageClicked
+                        }))
 
-export default ImagesData;
+
+                        }}
+                    closeModal={()=>{
+                        setImageClickedData(null);
+                        setImageClicked(null);
+                        
+                    }}
+                />
+      </Suspense>}
+        </Fragment>
+    );
+  }

@@ -4,6 +4,7 @@ import next from './assets/images/next.png';
 import prev from './assets/images/prev.png';
 const DisplayModal=(props)=>
 {
+    console.log(props.imageData[props.imageClicked])
   return( 
   <div className="DisplayModal">
              
@@ -11,19 +12,19 @@ const DisplayModal=(props)=>
              <span className="closeModal" onClick={props.closeModal}>X</span>
              {/* Modal IMAGE section */}
              <div className="imageArea">
-                {props.imageClickedData ? <img src={props.imageClickedData[0].urls.small}/>:null}
+                {props.imageClicked !== null ? <img src={props.imageData[props.imageClicked].urls.small}/>:null}
             </div>
             {/* Modal IMAGE content area section */}
             <div className="contentArea">
-                {props.imageClickedData && props.imageClickedData[0].sponsorship ? <h2>
-                {props.imageClickedData[0].sponsorship.tagline}  
-                </h2>:props.imageClickedData && props.imageClickedData[0].user.bio ? <h2>
-                {props.imageClickedData[0].user.bio}  
-                </h2>:props.imageClickedData && props.imageClickedData[0].user && !props.imageClickedData[0].user.bio ? <h2>
-                {props.imageClickedData[0].user.name}  
+                {props.imageClicked !== null && props.imageData[props.imageClicked].sponsorship ? <h2>
+                {props.imageData[props.imageClicked].sponsorship.tagline}  
+                </h2>:props.imageClicked !== null && props.imageData[props.imageClicked].user.bio ? <h2>
+                {props.imageData[props.imageClicked].user.bio}  
+                </h2>:props.imageClicked !== null && props.imageData[props.imageClicked].user && !props.imageData[props.imageClicked].user.bio ? <h2>
+                {props.imageData[props.imageClicked].user.name}  
                 </h2>:null}
-                {props.imageClickedData ? <p>
-                {props.imageClickedData[0].alt_description}  
+                {props.imageClicked !== null ? <p>
+                {props.imageData[props.imageClicked].alt_description}  
                 </p>:null}
             </div> 
              {/* Next button */} 
